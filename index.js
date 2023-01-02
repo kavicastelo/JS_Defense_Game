@@ -46,13 +46,12 @@ function animate(){
     placementTile.forEach((tile)=>{
         tile.update(mouse)
     })
-
-    const mouse = {
-        x:undefined,
-        y:undefined
-    }
-    window.addEventListener('mousemove',(event)=>{
-        mouse.x = event.clientX
-        mouse.y = event.clientY
-    })
 }
+const mouse = {
+    x:undefined,
+    y:undefined
+}
+window.addEventListener('mousemove',(event)=>{
+    mouse.x = event.clientX
+    mouse.y = event.clientY
+})
