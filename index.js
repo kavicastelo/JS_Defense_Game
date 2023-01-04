@@ -32,20 +32,26 @@ background.onload = ()=>{
 background.src = 'img/defense-game.png'
 
 const enemies = []
-for (let i = 1; i < 10; i++) {
-    const xOffset = i *100
-    enemies.push(new Enemy({position:{x:waypoints[0].x - xOffset,y:waypoints[0].y}}))
+
+function spawnEnemies(spawnCount) {
+    for (let i = 1; i < spawnCount + 1; i++) {
+        const xOffset = i *100
+        enemies.push(new Enemy({position:{x:waypoints[0].x - xOffset,y:waypoints[0].y}}))
+    }
 }
 
 const buildings = []
 let activeTile = undefined
+let enemyCount = 5
+spawnEnemies(enemyCount)
 
 function animate(){
     requestAnimationFrame(animate)
     c.drawImage(background,0,0)
-    enemies.forEach(enemy=>{
+    for (let i = enemies.length -1; i >= 0; i--) {
+        const enemy = enemies[i]
         enemy.update()
-    })
+    }
     placementTile.forEach((tile)=>{
         tile.update(mouse)
     })
@@ -70,6 +76,18 @@ function animate(){
             const distance = Math.hypot(xDifference,yDifference)
 
             if (distance < projectTile.enemy.radious + projectTile.radious) {
+                projectTile.enemy.health -= 20
+                if (projectTile.enemy.health <= 0){
+                    const enemyIndex = enemies.findIndex((enemy)=>{
+                        return projectTile.enemy === enemy
+                    })
+                    if (enemyIndex > -1) enemies.splice(enemyIndex,1)
+                }
+                // make enemies
+                if (enemies.length === 0){
+                    enemyCount += 2
+                    spawnEnemies(enemyCount)
+                }
                 building.projectTile.splice(j, 1)
             }
         }

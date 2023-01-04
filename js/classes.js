@@ -34,6 +34,7 @@ class Enemy {
             y: this.position.y + this.heigth /2
         }
         this.radious = 25
+        this.health = 100
     }
 
     draw(){
@@ -42,6 +43,12 @@ class Enemy {
         c.beginPath()
         c.arc(this.center.x, this.center.y, this.radious, 0, Math.PI * 2)
         c.fill()
+
+        // health bar
+        c.fillStyle = 'red'
+        c.fillRect(this.position.x, this.position.y - 15, this.width, 10)
+        c.fillStyle = 'green'
+        c.fillRect(this.position.x, this.position.y - 15, this.width * this.health / 100, 10)
     }
 
     update(){
@@ -90,7 +97,7 @@ class ProjectTile {
         const angle = Math.atan2(this.enemy.center.y - this.position.y,
             this.enemy.center.x - this.position.x)
 
-        const power = 2
+        const power = 1.5
         this.velocity.x = Math.cos(angle) * power
         this.velocity.y = Math.sin(angle) * power
 
@@ -126,7 +133,7 @@ class Building {
 
     update(){
         this.draw()
-        if (this.frames % 50 === 0 && this.target){
+        if (this.frames % 100 === 0 && this.target){
             this.projectTile.push(
                 new ProjectTile({
                     position:{
