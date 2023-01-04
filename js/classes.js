@@ -33,11 +33,15 @@ class Enemy {
             x: this.position.x + this.width / 2,
             y: this.position.y + this.heigth /2
         }
+        this.radious = 25
     }
 
     draw(){
         c.fillStyle='red'
-        c.fillRect(this.position.x,this.position.y,this.width,this.heigth)
+        //c.fillRect(this.position.x,this.position.y,this.width,this.heigth)
+        c.beginPath()
+        c.arc(this.center.x, this.center.y, this.radious, 0, Math.PI * 2)
+        c.fill()
     }
 
     update(){
@@ -63,17 +67,19 @@ class Enemy {
 }
 
 class ProjectTile {
-    constructor({position = {x:0,y:0}}) {
+    constructor({position = {x:0,y:0}, enemy}) {
         this.position = position
         this.velocity = {
             x: 0,
             y: 0
         }
+        this.enemy = enemy
+        this.radious = 10
     }
 
     draw(){
         c.beginPath()
-        c.arc(this.position.x, this.position.y, 10, 0, Math.PI * 2)
+        c.arc(this.position.x, this.position.y, this.radious, 0, Math.PI * 2)
         c.fillStyle = 'orange'
         c.fill()
     }
@@ -81,11 +87,12 @@ class ProjectTile {
     update(){
         this.draw()
 
-        const angle = Math.atan2(enemies[0].position.y - this.position.y,
-            enemies[0].position.x - this.position.x)
+        const angle = Math.atan2(this.enemy.center.y - this.position.y,
+            this.enemy.center.x - this.position.x)
 
-        this.velocity.x = Math.cos(angle)
-        this.velocity.y = Math.sin(angle)
+        const power = 2
+        this.velocity.x = Math.cos(angle) * power
+        this.velocity.y = Math.sin(angle) * power
 
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
@@ -101,18 +108,35 @@ class Building {
             x: this.position.x + this.width /2,
             y: this.position.y + this.height / 2
         }
-        this.projectTile = [
-            new ProjectTile({
-                position:{
-                    x: this.center.x,
-                    y: this.center.y
-                }
-            })
-        ]
+        this.projectTile = []
+        this.radious = 150
+        this.target = undefined
+        this.frames = 0
     }
 
     draw(){
         c.fillStyle='blue'
         c.fillRect(this.position.x, this.position.y, this.width, this.height)
+
+        c.beginPath()
+        c.arc(this.center.x, this.center.y, this.radious, 0, Math.PI * 2)
+        c.fillStyle = 'rgba(0,0,255, 0.2)'
+        c.fill()
+    }
+
+    update(){
+        this.draw()
+        if (this.frames % 50 === 0 && this.target){
+            this.projectTile.push(
+                new ProjectTile({
+                    position:{
+                        x: this.center.x,
+                        y: this.center.y
+                    },
+                    enemy: this.target
+                })
+            )
+        }
+        this.frames++
     }
 }

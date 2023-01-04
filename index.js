@@ -49,11 +49,30 @@ function animate(){
     placementTile.forEach((tile)=>{
         tile.update(mouse)
     })
-    buildings.forEach((building)=>{
-        building.draw()
-        building.projectTile.forEach(projectTile=>{
-            projectTile.update()
+    buildings.forEach((building, i)=>{
+        building.update()
+        building.target = null
+        const validEnemies = enemies.filter(enemy=>{
+            const xDifference = enemy.center.x - building.center.x
+            const yDifference = enemy.center.y - building.center.y
+            const distance = Math.hypot(xDifference,yDifference)
+            return distance < enemy.radious + building.radious
         })
+        building.target = validEnemies[0]
+
+        for (let j = building.projectTile.length -1; j >= 0; j--) {
+            const projectTile = building.projectTile[j]
+
+            projectTile.update()
+
+            const xDifference = projectTile.enemy.center.x - projectTile.position.x
+            const yDifference = projectTile.enemy.center.y - projectTile.position.y
+            const distance = Math.hypot(xDifference,yDifference)
+
+            if (distance < projectTile.enemy.radious + projectTile.radious) {
+                building.projectTile.splice(j, 1)
+            }
+        }
     })
 }
 const mouse = {
