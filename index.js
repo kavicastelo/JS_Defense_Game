@@ -43,14 +43,30 @@ function spawnEnemies(spawnCount) {
 const buildings = []
 let activeTile = undefined
 let enemyCount = 5
+let hearts = 10
 spawnEnemies(enemyCount)
 
 function animate(){
-    requestAnimationFrame(animate)
+    const animationId = requestAnimationFrame(animate)
     c.drawImage(background,0,0)
     for (let i = enemies.length -1; i >= 0; i--) {
         const enemy = enemies[i]
         enemy.update()
+
+        if (enemy.position.x > canvas.width){
+            enemies.splice(i,1)
+            hearts -= 1
+
+            if (hearts === 0){
+                cancelAnimationFrame(animationId)
+                document.querySelector('.game-over').style.display='flex'
+            }
+        }
+        // make enemies
+        if (enemies.length === 0){
+            enemyCount += 2
+            spawnEnemies(enemyCount)
+        }
     }
     placementTile.forEach((tile)=>{
         tile.update(mouse)
@@ -82,11 +98,6 @@ function animate(){
                         return projectTile.enemy === enemy
                     })
                     if (enemyIndex > -1) enemies.splice(enemyIndex,1)
-                }
-                // make enemies
-                if (enemies.length === 0){
-                    enemyCount += 2
-                    spawnEnemies(enemyCount)
                 }
                 building.projectTile.splice(j, 1)
             }
