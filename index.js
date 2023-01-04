@@ -23,7 +23,7 @@ placementTilesData2D.forEach((row, y)=>{
         }
     })
 })
-console.log(placementTile)
+//console.log(placementTile)
 
 const background = new Image()
 background.onload = ()=>{
@@ -37,6 +37,9 @@ for (let i = 1; i < 10; i++) {
     enemies.push(new Enemy({position:{x:waypoints[0].x - xOffset,y:waypoints[0].y}}))
 }
 
+const buildings = []
+let activeTile = undefined
+
 function animate(){
     requestAnimationFrame(animate)
     c.drawImage(background,0,0)
@@ -46,12 +49,39 @@ function animate(){
     placementTile.forEach((tile)=>{
         tile.update(mouse)
     })
+    buildings.forEach((building)=>{
+        building.draw()
+        building.projectTile.forEach(projectTile=>{
+            projectTile.update()
+        })
+    })
 }
 const mouse = {
     x:undefined,
     y:undefined
 }
+canvas.addEventListener('click',(event)=>{
+    if (activeTile && !activeTile.isOccupied){
+        buildings.push(new Building({
+            position:{
+                x:activeTile.position.x,
+                y:activeTile.position.y
+            }
+        }))
+        activeTile.isOccupied =true
+    }
+})
 window.addEventListener('mousemove',(event)=>{
     mouse.x = event.clientX
     mouse.y = event.clientY
+
+    activeTile = null
+    for (let i = 0; i < placementTile.length; i++) {
+        const tile = placementTile[i]
+        if (mouse.x > tile.position.x && mouse.x < tile.position.x + tile.size &&
+            mouse.y > tile.position.y && mouse.y < tile.position.y + tile.size){
+            activeTile = tile
+            break
+        }
+    }
 })
