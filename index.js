@@ -23,7 +23,6 @@ placementTilesData2D.forEach((row, y)=>{
         }
     })
 })
-//console.log(placementTile)
 
 const background = new Image()
 background.onload = ()=>{
@@ -45,6 +44,7 @@ let activeTile = undefined
 let enemyCount = 3
 let hearts = 10
 let coins = 100
+const explosions = []
 spawnEnemies(enemyCount)
 
 function animate(){
@@ -65,12 +65,22 @@ function animate(){
             }
         }
         // make enemies
-        console.log(enemies.length)
-        if (enemies.length === 0){
+        if (enemies.length === 0 || enemies.length === 1){
             enemyCount += 2
             spawnEnemies(enemyCount)
         }
     }
+
+    for (let i = explosions.length -1; i >= 0; i--) {
+        const explosion = explosions[i]
+        explosion.draw()
+        explosion.update()
+
+        if (explosion.frames.current >= explosion.frames.max -1) {
+            explosions.splice(i,1)
+        }
+    }
+
     placementTile.forEach((tile)=>{
         tile.update(mouse)
     })
@@ -106,6 +116,20 @@ function animate(){
                         document.querySelector('#coins').innerHTML = coins
                     }
                 }
+                explosions.push(new Sprites({
+                    position:{
+                        x:projectTile.position.x,
+                        y:projectTile.position.y
+                    },
+                    imgSrc:'./img/explosion.png',
+                    frames:{
+                        max:4
+                    },
+                    offset:{
+                        x:0,
+                        y:0
+                    }
+                }))
                 building.projectTile.splice(j, 1)
             }
         }
@@ -126,6 +150,9 @@ canvas.addEventListener('click',(event)=>{
             }
         }))
         activeTile.isOccupied =true
+        buildings.sort((a,b)=>{
+            return a.position.y - b.position.y
+        })
     }
 })
 window.addEventListener('mousemove',(event)=>{
