@@ -105,7 +105,7 @@ class ProjectTile {
         const angle = Math.atan2(this.enemy.center.y - this.position.y,
             this.enemy.center.x - this.position.x)
 
-        const power = 1.5
+        const power = 2
         this.velocity.x = Math.cos(angle) * power
         this.velocity.y = Math.sin(angle) * power
 
