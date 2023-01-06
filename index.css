@@ -47,3 +47,19 @@
     align-items: center;
     margin-right: 10px;
 }
+.start-screen{
+    position: absolute;
+    top: 80%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+.start-screen>p{
+    font-size: 30px;
+    color: white;
+    font-family: 'Changa One', cursive;
+    -webkit-text-stroke: 2px black;
+}
